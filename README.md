@@ -17,8 +17,8 @@ Second, this script will automatically install the latest version of Backblaze f
 3. Change ```password``` to match the password associated with the ```login``` account.
 
 #### install.sh and remove.sh
-1. Change ```addigyWorkingDir``` to match the name of your custom software in Addigy. For example, if I created this as a custom software item in Addigy called "Cirrus Backblaze", and if it labeled it version "1.0.0", I'd change string of ```addigyWorkingDir``` from 'CHANGE_ME (X.X.X)' to 'Cirrus Backblaze (1.0.0)'.
-2. Change ```backblazer``` to match the name of your backblazer.sh file. You'll want to change this to something unique for each client. For example, if it's for Cirrus Partners, I would change it from 'backblazer.sh' to 'cp-backblazer.sh', and I would make sure that the actual backblazer.sh file matches that variable *exactly*.
+1. Change ```addigyWorkingDir``` to match the name of your custom software in Addigy. For example, if I created this as a custom software item in Addigy called "Cirrus Backblaze", and if it labeled it version "1.0.0", I'd change string of ```addigyWorkingDir``` from ```'CHANGE_ME (X.X.X)'``` to ```'Cirrus Backblaze (1.0.0)'```.
+2. Change ```backblazer``` to match the name of your backblazer.sh file. You'll want to change this to something unique for each client. For example, if it's for Cirrus Partners, I would change it from ```'backblazer.sh'``` to ```'cp-backblazer.sh'```, and I would make sure that the actual backblazer.sh file matches that variable *exactly*.
 
 ### Load to Addigy
 1. Go to create a piece of custom software (see https://addigy.freshdesk.com/support/solutions/articles/8000042895-creating-custom-software)
