@@ -5,7 +5,7 @@ This set of scripts will install Backblaze on a workstation and ensure that it s
 ## CAUTION!!
 This script has a few things that may be considered unacceptable in high-security environments: 
 
-First, it stores a script that contains the password to the machine's Backblaze account in plain text on the hard drive. Addigy transmits over HTTPS, so thats good, but make sure you don't use this script on machines that don't have FV2 (but, why the hell wouldn't you have FV2 when Addigy makes it so easy?!). If this is an unnacceptable risk for you, please, uncomment the line ```rm -- $0``` in backblazer.sh; this will cause the script to self-destruct, but you'll also lose the abillity for the script to remove Backblaze.
+First, it stores a script that contains the password to the machine's Backblaze account in plain text on the hard drive. Addigy transmits over HTTPS, so thats good, but make sure you don't use this script on machines that don't have FV2 (but, why the hell wouldn't you have FV2 when Addigy makes it so easy?!). If this is an unnacceptable risk for you, please, uncomment the line ```/usr/bin/printf "Self-destructing.\n"; /bin/rm -- "$0"``` in backblazer.sh; this will cause the script to self-destruct, but you'll also lose the abillity for the script to remove Backblaze.
 
 Second, this script will automatically install the latest version of Backblaze from their website. If anyone were to hijack 'https://secure.backblaze.com/mac/install_backblaze.dmg', you'd be royally screwed. A work around would be to set up a different source for install_backblaze.dmg, and place a trusted version in that location. If anyone in the community wants to be responsible for that, I'd be happy to assist. Realistically, keeping autoupdate poses the same risk.
 
