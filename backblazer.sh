@@ -61,8 +61,9 @@ installBackblaze() {
     /usr/bin/printf "BZERROR:1001 means the install was successful. Thanks for being clear about that, Backblaze.\n"
     /usr/bin/printf "Unmounting image.\n"
     /usr/sbin/diskutil unmount "/Volumes/Backblaze Installer"
+    /usr/bin/printf "Removing install_backblaze.dmg\n"
     /bin/rm "/Library/${orgName}/install_backblaze.dmg"
-    # /bin/rm -- "$0"
+    # /usr/bin/printf "Self-destructing.\n"; /bin/rm -- "$0"
     exit 0
 }
 
