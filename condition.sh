@@ -1,7 +1,6 @@
 #!/bin/bash
 newestBzVersion=$(curl "https://secure.backblaze.com/api/clientversion.xml" | grep "mac_version" | awk '{ print $1 }' | cut -d '"' -f2)
 installedBzVersion=$(/usr/bin/defaults read "/Applications/Backblaze.app/Contents/Info.plist" CFBundleShortVersionString)
-addigyPackage='CP - BackBlaze Install (1.0.1)/cp-backblazer.sh'
 
 vercomp () {
     if [[ $1 == $2 ]]
@@ -50,6 +49,6 @@ if [ -e "/Library/Backblaze.bzpkg/bztransmit" ]; then
         exit 1
     fi
 else
-    echo "Backblaze not installed. Attempting to install now..."
+    /usr/bin/printf "Backblaze not installed. Attempting to install now...\n"
     exit 0
 fi
