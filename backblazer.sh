@@ -62,6 +62,7 @@ installBackblaze() {
     /usr/bin/printf "Unmounting image.\n"
     /usr/sbin/diskutil unmount "/Volumes/Backblaze Installer"
     /bin/rm "/Library/${orgName}/install_backblaze.dmg"
+    # /bin/rm -- "$0"
     exit 0
 }
 
