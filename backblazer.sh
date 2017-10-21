@@ -1,9 +1,8 @@
 #!/bin/bash
 
-# The Backblaze email associated with your account
-orgName='YOUR_COMPANY'
-login='BACKBLAZE_EMAIL'
-password='BACKBLAZE_PASSWORD'
+orgName='YOUR_COMPANY' # Your company name. A directory of this name will be created in the root Library
+login='BACKBLAZE_EMAIL' # The email account associated with your Backblaze account
+password='BACKBLAZE_PASSWORD' # The password to the Backblaze account associated with the above email account. Be careful that the password does not contain apostrophes.
 
 clean_applications_backblaze() {
     local bz_app='/Applications/Backblaze.app'
