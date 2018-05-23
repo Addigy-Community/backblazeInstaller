@@ -85,8 +85,6 @@ if [[ "$BZ_LOGIN" == '' ]]; then
 	exit 1
 fi
 
-# /usr/bin/printf "$BZ_LOGIN $BZ_PASSWORD $BZ_GROUP_ID $BZ_GROUP_TOKEN\n"
-
 # Create a secure temporary directory for the Bz Installer
 TMP_DIR="$(/usr/bin/mktemp -d "/tmp/$(/usr/bin/basename "$0").XXXXXX")"
 if [ $? -eq "0" ] && [ -e "$TMP_DIR" ]; then
