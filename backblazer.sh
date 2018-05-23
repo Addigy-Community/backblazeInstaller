@@ -67,6 +67,13 @@ for ITERATED_USER in $(dscl . list /Users UniqueID | awk '$2 >= 500 {print $1}')
 	fi
 done
 
+# If no viable user was found, exit without installing Backblaze.
+if [[ "$BZ_LOGIN" == '' ]]; then
+	writeToLog "No viable user account found. Exiting."
+	exit 1
+fi
+
+# Check if Backblazer was triggered for the purpose of updating the client.
 if [ -f "/Library/Backblaze/bztransmit" ] || [ -f "/Library/Backblaze.bzpkg/bztransmit" ]; then
 	writeToLog "Backblaze already installed. Checking if update is required."
 	if [[ -f "${BACKBLAZER_DIR}/updateRequired" ]]; then
@@ -77,12 +84,6 @@ if [ -f "/Library/Backblaze/bztransmit" ] || [ -f "/Library/Backblaze.bzpkg/bztr
 		writeToLog "Update not required. Exiting."
 		exit 1
 	fi
-fi
-
-# If no viable user was found, exit without installing Backblaze.
-if [[ "$BZ_LOGIN" == '' ]]; then
-	writeToLog "No viable user account found. Exiting."
-	exit 1
 fi
 
 # Create a secure temporary directory for the Bz Installer
