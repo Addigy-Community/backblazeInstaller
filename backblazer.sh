@@ -130,7 +130,9 @@ fi
 /usr/bin/printf "$BZ_LOGIN" > "$BACKBLAZER_DIR/BZ_1"
 /usr/bin/printf "$BZ_PASSWORD" > "$BACKBLAZER_DIR/BZ_2"
 
+# Clear any updateRequired indicator
 if [[ -f "$BACKBLAZER_DIR/updateRequired" ]]; then
+	writeToLog "Removing $BACKBLAZER_DIR/updateRequired"
 	/bin/rm "$BACKBLAZER_DIR/updateRequired"
 fi
 
