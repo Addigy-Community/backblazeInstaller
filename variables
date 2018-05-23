@@ -1,0 +1,21 @@
+# Add user accounts that should not be used to license Backblaze
+IGNORED_USERS=(
+	'' # ex. 'localadmin'
+)
+
+# CONFIGURE THE EMAIL PATTERN BY UNCOMMENTING THE CORRECT PATTERN
+# EMAIL_USERNAME="FULLNAME" # eg., fullname@example.com
+# EMAIL_USERNAME="FIRST-INITIAL_LAST-NAME" # eg., fname@example.com
+# EMAIL_USERNAME="FIRST-NAME_LAST-INITIAL" # eg., fulln@example.com
+# EMAIL_USERNAME="FIRST-NAME" # eg., name@example.com
+# EMAIL_USERNAME="LAST-NAME" # eg., full@example.com
+
+# IF THE EMAIL HAS A SEPARATING CHARACTER (eg. b.morales@gocirrus.com), ENTER IT
+# BETWEEN THE SINGLE QUOTES BELOW. OTHERWISE, LEAVE AS-IS (Don't comment out)
+SEPARATING_CHAR='' # ex. '.'
+
+# ENTER MACOS USERNAMES THAT SHOULD BE IGNORED (not used to license Bz)
+
+EMAIL_DOMAIN='' # ex. '@example.com'
+BZ_GROUP_ID='####' # ex. '1234'
+BZ_GROUP_TOKEN='' # ex. 'slkjs134lk421380rweo08sdhf'

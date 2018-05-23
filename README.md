@@ -2,28 +2,25 @@
 
 This set of scripts will install Backblaze on a workstation and ensure that it stays up-to-date with the latest version from Backblaze. This script is helpful if you want to automate the deployment of the latest version of Backblaze to a fleet, but you loose some control over the environment, as it upgrades as though you had auto-update turned on.
 
-## CAUTION!!
-This script has a few things that may be considered unacceptable in high-security environments: 
-
-First, it stores a script that contains the password to the machine's Backblaze account in plain text on the hard drive. Addigy transmits over HTTPS, so thats good, but make sure you don't use this script on machines that don't have FV2 (but, why the hell wouldn't you have FV2 when Addigy makes it so easy?!). If this is an unnacceptable risk for you, please, uncomment the line ```/usr/bin/printf "Self-destructing.\n"; /bin/rm -- "$0"``` in backblazer.sh; this will cause the script to self-destruct, but you'll also lose the abillity for the script to remove Backblaze.
-
-Second, this script will automatically install the latest version of Backblaze from their website. If anyone were to hijack 'https://secure.backblaze.com/mac/install_backblaze.dmg', you'd be royally screwed. A work around would be to set up a different source for install_backblaze.dmg, and place a trusted version in that location. If anyone in the community wants to be responsible for that, I'd be happy to assist. Realistically, keeping autoupdate poses the same risk.
+## Things to Consider
+1. This installer assumes that you're using Backblaze groups, and that you're creating individual accounts within that group by whitelisting email domains.
+2. This installer generates a random password for the user's Backblaze account. This password is stored on the hard drive in plain text, though it's hidden from people without Admin rights. If a user needs to recover some files, they can do a password reset at https://secure.backblaze.com/forgot_password.htm. Otherwise, an admin can find the password at `/Library/Backblazer/BZ_2`. It's just a UUID. If they change their password, that `BZ_2` file will need to be updated to match; otherwise, upgrades will fail in the future.
+3. Cirrus Partners, LLC and I (Benjamin Morales) are in no way responsible for any negative affect using this installer may have on your business, the businesses you support, people you support, your dog, etc. This is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. The source of the installer is open to your review, and YOU ARE RESPONSIBLE for your own actions and use of these scripts. If you notice a problem, feel free to talk to me on the MacAdmin's Slack Channel (@bwmorales), or make a pull request.
+4. The removal script is an adaptation of an old removal script from Backblaze.
 
 ## How to Install
-### Prepare the Variables
-#### backblazer.sh
-1. Change ```orgName``` to match your company name. This will create a directory in the library that will be used as the download location for the Backblaze Installer DMG.
-2. Change ```login``` to match the email address associated with Backblaze account to which you'd like to backup the computer.
-3. Change ```password``` to match the password associated with the ```login``` account.
 
-#### install.sh and remove.sh
-1. Change ```addigyWorkingDir``` to match the name of your custom software in Addigy. For example, if I created this as a custom software item in Addigy called "Cirrus Backblaze", and if it labeled it version "1.0.0", I'd change string of ```addigyWorkingDir``` from ```'CHANGE_ME (X.X.X)'``` to ```'Cirrus Backblaze (1.0.0)'```.
-2. Change ```backblazer``` to match the name of your backblazer.sh file. You'll want to change this to something unique for each client. For example, if it's for Cirrus Partners, I would change it from ```'backblazer.sh'``` to ```'cp-backblazer.sh'```, and I would make sure that the actual backblazer.sh file matches that variable *exactly*.
+#### Prepare "variables" file
+1. IGNORED_USERS: this is an array of macOS users who should not be used for licensing the Backblaze account. Put each username in single quotes, separating multiple users with new lines.
+2. Uncomment the correct email username pattern (EMAIL_USERNAME). Remove the `#` before the line that matches your organization's email username pattern. This will pull the name as entered into macOS, so if your user's email address doesn't match the username on the Mac, your going to get frustrated. It will still allow you to register, but it's going to be a mess for your for your end user if they try to recover files on their own. Get on top of that!
+3. SEPARATING_CHAR: If you have a `.` or `-` or something silly like that in your organization's email addresses, you can enter that here. Leaving it at `''` will keep it from adding a character.
+4. EMAIL_DOMAIN: For example, `@gocirrus.com` or `gocirrus.com`. It doesn't matter whether you add the `@`
+5. BZ_GROUP_ID: Find at backblaze.com. In your admin account, **Group Management** > **Send Invites** > **Advanced Instructions**. The group ID is the four digit code in the *Mac* section, where it talks about executing a command in a terminal window.
+6. BZ_GROUP_TOKEN: The group token can be found next to the group ID; it's the longer string of random numbers.
 
-### Load to Addigy
+#### Load to Addigy
 1. Go to create a piece of custom software (see https://addigy.freshdesk.com/support/solutions/articles/8000042895-creating-custom-software)
-2. The Software Identifier and Version correspond to ```addigyWorkingDir```.
-3. Upload your copy of the backblazer.sh script, changing the name as discussed in "Prepare the Variables."
+2. Upload "backblazer.sh" and "variables" as separate files.
 4. Copy the contents of install.sh to the "Installation" box.
 5. Copy the contents of condition.sh to the "Conditions Script" box.
 6. Copy the contents of remove.sh to the "Remove Script" box.
