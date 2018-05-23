@@ -7,6 +7,7 @@ This set of scripts will install Backblaze on a workstation and ensure that it s
 2. This installer generates a random password for the user's Backblaze account. This password is stored on the hard drive in plain text, though it's hidden from people without Admin rights. If a user needs to recover some files, they can do a password reset at https://secure.backblaze.com/forgot_password.htm. Otherwise, an admin can find the password at `/Library/Backblazer/BZ_2`. It's just a UUID. If they change their password, that `BZ_2` file will need to be updated to match; otherwise, upgrades will fail in the future.
 3. Cirrus Partners, LLC and I (Benjamin Morales) are in no way responsible for any negative affect using this installer may have on your business, the businesses you support, people you support, your dog, etc. This is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. The source of the installer is open to your review, and YOU ARE RESPONSIBLE for your own actions and use of these scripts. If you notice a problem, feel free to talk to me on the MacAdmin's Slack Channel (@bwmorales), or make a pull request.
 4. The removal script is an adaptation of an old removal script from Backblaze.
+5. The installer will attempt to register to Backblaze the user with the lowest UID > 500 that is not in the IGNORED_USERS array.
 
 ## How to Install
 
