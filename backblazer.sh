@@ -1,5 +1,4 @@
 #!/bin/bash
-# Source the variables file which contains data that should be deleted.
 source ./variables
 
 EMAIL_DOMAIN="$(/usr/bin/printf "$EMAIL_DOMAIN" | sed 's/@//')"
