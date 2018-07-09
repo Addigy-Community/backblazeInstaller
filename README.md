@@ -1,10 +1,10 @@
 # Backblaze Installer
 
-This set of scripts will install Backblaze on a workstation and ensure that it stays up-to-date with the latest version from Backblaze. This script is helpful if you want to automate the deployment of the latest version of Backblaze to a fleet, but you loose some control over the environment, as it upgrades as though you had auto-update turned on.
+This set of scripts will install Backblaze on a workstation. This script is helpful if you want to automate the deployment of the latest version of Backblaze to a fleet.
 
 ## Things to Consider
 1. This installer assumes that you're using Backblaze groups, and that you're creating individual accounts within that group by whitelisting email domains.
-2. This installer generates a random password for the user's Backblaze account. This password is stored on the hard drive in plain text, though it's hidden from people without Admin rights. If a user needs to recover some files, they can do a password reset at https://secure.backblaze.com/forgot_password.htm. Otherwise, an admin can find the password at `/Library/Backblazer/BZ_2`. It's just a UUID. If they change their password, that `BZ_2` file will need to be updated to match; otherwise, upgrades will fail in the future.
+2. This installer allows Backblaze to generate a unique password. To recover, the user will need to reset her or his password.
 3. Cirrus Partners, LLC and I (Benjamin Morales) are in no way responsible for any negative affect using this installer may have on your business, the businesses you support, people you support, your dog, etc. This is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. The source of the installer is open to your review, and YOU ARE RESPONSIBLE for your own actions and use of these scripts. If you notice a problem, feel free to talk to me on the MacAdmin's Slack Channel (@bmorales), or make a pull request.
 4. The removal script is an adaptation of an old removal script from Backblaze.
 5. The installer will attempt to register to Backblaze the user with the lowest UID > 500 that is not in the IGNORED_USERS array.
@@ -20,8 +20,10 @@ This set of scripts will install Backblaze on a workstation and ensure that it s
 6. BZ_GROUP_TOKEN: The group token can be found next to the group ID; it's the longer string of random numbers.
 
 #### Load to Addigy
-1. Go to create a piece of custom software (see https://addigy.freshdesk.com/support/solutions/articles/8000042895-creating-custom-software)
-2. Upload "backblazer.sh" and "variables" as separate files.
-4. Copy the contents of install.sh to the "Installation" box.
-5. Copy the contents of condition.sh to the "Conditions Script" box.
-6. Copy the contents of remove.sh to the "Remove Script" box.
+1. Alter the names of `backblazer.sh` and `variables` so that they're uniquely identifiable within Addigy. Maybe `identifier-variables`, for example.
+2. Adjust the `source` command in `backblazer.sh` to match the new name of the variables file.
+3. Go to create a piece of custom software (see https://addigy.freshdesk.com/support/solutions/articles/8000042895-creating-custom-software)
+4. Upload "\*-backblazer.sh" and "\*-variables" as separate files.
+5. Copy the contents of install.sh to the "Installation" box.
+6. Copy the contents of condition.sh to the "Conditions Script" box.
+7. Copy the contents of remove.sh to the "Remove Script" box.
