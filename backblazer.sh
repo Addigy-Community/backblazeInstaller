@@ -2,7 +2,6 @@
 source ./variables
 
 EMAIL_DOMAIN="$(/usr/bin/printf "$EMAIL_DOMAIN" | sed 's/@//')"
-BZ_PASSWORD="$(/usr/bin/uuidgen)"
 LOG_FILE="/Library/Addigy/logs/bz_install.log"
 BACKBLAZER_DIR="/Library/Backblazer"
 
@@ -72,19 +71,6 @@ if [[ "$BZ_LOGIN" == '' ]]; then
 	exit 1
 fi
 
-# Check if Backblazer was triggered for the purpose of updating the client.
-if [ -f "/Library/Backblaze/bztransmit" ] || [ -f "/Library/Backblaze.bzpkg/bztransmit" ]; then
-	writeToLog "Backblaze already installed. Checking if update is required."
-	if [[ -f "${BACKBLAZER_DIR}/updateRequired" ]]; then
-		writeToLog "Update required. Overwriting login and password variables."
-		BZ_LOGIN="$(/bin/cat "$BACKBLAZER_DIR/BZ_1")"
-		BZ_PASSWORD="$(/bin/cat "$BACKBLAZER_DIR/BZ_2")"
-	else
-		writeToLog "Update not required. Exiting."
-		exit 1
-	fi
-fi
-
 # Create a secure temporary directory for the Bz Installer
 TMP_DIR="$(/usr/bin/mktemp -d "/tmp/$(/usr/bin/basename "$0").XXXXXX")"
 if [ $? -eq "0" ] && [ -e "$TMP_DIR" ]; then
@@ -96,44 +82,44 @@ fi
 
 # Download the Bz Installer from Backblaze's website.
 writeToLog "Downloading latest Backblaze installer to ${TMP_DIR}."
-/usr/bin/curl -o "${TMP_DIR}/install_backblaze.dmg" 'https://secure.backblaze.com/mac/install_backblaze.dmg' &> /dev/null
+if [[ -f "/Library/Addigy/lan-cache" ]]; then
+	/Library/Addigy/lan-cache download 'https://secure.backblaze.com/mac/install_backblaze.dmg' "${TMP_DIR}/install_backblaze.dmg"
+else
+	/usr/bin/curl -o "${TMP_DIR}/install_backblaze.dmg" 'https://secure.backblaze.com/mac/install_backblaze.dmg' &> /dev/null
+fi
 
 # Attach image using nobrowse to prevent it from showing on the desktop.
 writeToLog "Attaching ${TMP_DIR}/install_backblaze.dmg."
 /usr/bin/hdiutil attach -nobrowse "${TMP_DIR}/install_backblaze.dmg" &> /dev/null
 
 # Run the silent installer, passing the necessesary credentials as the arguments.
+
 writeToLog "Installing Backblaze."
-"/Volumes/Backblaze Installer/Backblaze Installer.app/Contents/MacOS/bzinstall_mate" -nogui -createaccount $BZ_LOGIN $BZ_PASSWORD $BZ_GROUP_ID $BZ_GROUP_TOKEN 2> /dev/null
+"/Volumes/Backblaze Installer/Backblaze Installer.app/Contents/MacOS/bzinstall_mate" -nogui -createaccount $BZ_LOGIN $BZ_GROUP_ID $BZ_GROUP_TOKEN 2> /dev/null
 
 writeToLog "Sleeping while Bz configures itself."
 /bin/sleep 15
 
 if [ -f "/Library/Backblaze/bztransmit" ] || [ -f "/Library/Backblaze.bzpkg/bztransmit" ]; then
-	writeToLog "Backblaze is running."
+  writeToLog "Backblaze is running."
+elif /usr/bin/tail -3 /Library/Backblaze.bzpkg/install_log/install_log*.log | /usr/bin/grep account_exists; then
+  writeToLog "Installation was not successful, because the user already has an account. Sending ticket."
+  /usr/bin/curl -X POST https://$(/Library/Addigy/go-agent agent realm).addigy.com/submit_ticket/ -H 'content-type: application/json' -d "{\"agentid\": \"$(/Library/Addigy/go-agent agent agentid)\", \"orgid\":\"$(/Library/Addigy/go-agent agent orgid)\", \"name\":\"${BZ_LOGIN}\", \"description\":\"Failed to install Backblaze because user already has an account.\"}" &> /dev/null
 else
-	writeToLog "Backblaze is not running. Installation was not successful. Sending ticket."
-	/usr/bin/curl -X POST https://$(/Library/Addigy/go-agent agent realm).addigy.com/submit_ticket/ -H 'content-type: application/json' -d "{\"agentid\": \"$(/Library/Addigy/go-agent agent agentid)\", \"orgid\":\"$(/Library/Addigy/go-agent agent orgid)\", \"name\":\"${BZ_LOGIN}\", \"description\":\"Failed to install Backblaze.\"}" &> /dev/null
+  writeToLog "Backblaze is not running. Installation was not successful. Sending ticket."
+  /usr/bin/curl -X POST https://$(/Library/Addigy/go-agent agent realm).addigy.com/submit_ticket/ -H 'content-type: application/json' -d "{\"agentid\": \"$(/Library/Addigy/go-agent agent agentid)\", \"orgid\":\"$(/Library/Addigy/go-agent agent orgid)\", \"name\":\"${BZ_LOGIN}\", \"description\":\"Failed to install Backblaze.\"}" &> /dev/null
 fi
 
 # Unmount and delete DMG.
 writeToLog "Unmounting image."
-/usr/sbin/diskutil unmount "/Volumes/Backblaze Installer" &> /dev/null
+OIFS=$IFS
+IFS=$'\n'
+for BZ_VOLUME in $(/bin/ls /Volumes | /usr/bin/grep Backblaze); do
+  /usr/sbin/diskutil unmount "/Volumes/$BZ_VOLUME";
+done
+IFS=$OIFS
+
 writeToLog "Removing install_backblaze.dmg"
 /bin/rm -Rf "${TMP_DIR}"
-
-# Preserving login and password variables for future updates.
-if [[ ! -e "$BACKBLAZER_DIR" ]]; then
-	/bin/mkdir "$BACKBLAZER_DIR"
-fi
-/bin/chmod 700 "$BACKBLAZER_DIR" # Ensure non-admin users cannot access the dir.
-/usr/bin/printf "$BZ_LOGIN" > "$BACKBLAZER_DIR/BZ_1"
-/usr/bin/printf "$BZ_PASSWORD" > "$BACKBLAZER_DIR/BZ_2"
-
-# Clear any updateRequired indicator
-if [[ -f "$BACKBLAZER_DIR/updateRequired" ]]; then
-	writeToLog "Removing $BACKBLAZER_DIR/updateRequired"
-	/bin/rm "$BACKBLAZER_DIR/updateRequired"
-fi
 
 exit 0
