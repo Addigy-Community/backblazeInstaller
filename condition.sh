@@ -1,56 +1,8 @@
 #!/bin/bash
-NEWEST_BZ_VERSION=$(curl "https://secure.backblaze.com/api/clientversion.xml" | grep "mac_version" | awk '{ print $1 }' | cut -d '"' -f2)
-INSTALLED_BZ_VERSION=$(/usr/bin/defaults read "/Applications/Backblaze.app/Contents/Info.plist" CFBundleShortVersionString)
-BACKBLAZER_DIR="/Library/Backblazer"
-
-vercomp () {
-    if [[ $1 == $2 ]]
-    then
-        return 0
-    fi
-    local IFS=.
-    local i ver1=($1) ver2=($2)
-    # fill empty fields in ver1 with zeros
-    for ((i=${#ver1[@]}; i<${#ver2[@]}; i++))
-    do
-        ver1[i]=0
-    done
-    for ((i=0; i<${#ver1[@]}; i++))
-    do
-        if [[ -z ${ver2[i]} ]]
-        then
-            # fill empty fields in ver2 with zeros
-            ver2[i]=0
-        fi
-        if ((10#${ver1[i]} > 10#${ver2[i]}))
-        then
-            return 1
-        fi
-        if ((10#${ver1[i]} < 10#${ver2[i]}))
-        then
-            return 2
-        fi
-    done
-    return 0
-}
-
 if [ -e "/Library/Backblaze.bzpkg/bztransmit" ]; then
-    /usr/bin/printf "Backblaze already installed. Checking if update required.\n"
-    vercomp ${NEWEST_BZ_VERSION} ${INSTALLED_BZ_VERSION}
-    COMP=$? # 0 means the same, 1 means TARGET is newer, 2 means INSTALLED is newer
-    /usr/bin/printf "COMPARISON: %s" "${COMP}"
-
-    if [ "${COMP}" -eq 1 ]
-    then
-        /usr/bin/printf "Installed version is older than %s.\n" "${NEWEST_BZ_VERSION}"
-        /usr/bin/printf "Attempting to update.\n"
-				/usr/bin/touch "$BACKBLAZER_DIR/updateRequired"
-        exit 0
-    else
-        /usr/bin/printf "Installed version is the same or newer than the %s. No installation attempt wil be made.\n" "${NEWEST_BZ_VERSION}"
-        exit 1
-    fi
+  /usr/bin/printf "Backblaze already installed. Skipping.\n"
+  exit 1
 else
-    /usr/bin/printf "Backblaze not installed. Attempting to install now...\n"
-    exit 0
+  /usr/bin/printf "Backblaze not installed. Attempting to install now...\n"
+  exit 0
 fi
